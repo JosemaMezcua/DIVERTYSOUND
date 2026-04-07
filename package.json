@@ -1,0 +1,16 @@
+{
+  "name": "divertysound-crm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CRM de operativa de bodas con backend Node + base de datos persistente",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@seald-io/nedb": "^4.1.2",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.2"
+  }
+}

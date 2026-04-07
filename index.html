@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DIVERTYSOUND</title>
+    <link rel="icon" href="./logo-principal.jpg" type="image/jpeg" />
+    <link rel="shortcut icon" href="./logo-principal.jpg" type="image/jpeg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shape shape-a" aria-hidden="true"></div>
+    <div class="shape shape-b" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <img
+          id="brandLogo"
+          src="./logo-principal.jpg"
+          alt="Logo principal de DIVERTYSOUND"
+          onerror="this.style.display='none';document.getElementById('logoFallback').style.display='inline-block';"
+        />
+        <div>
+          <p class="eyebrow">CRM GESTIÓN DE EVENTOS</p>
+          <h1>DIVERTYSOUND</h1>
+          <span id="logoFallback" class="logo-fallback" style="display: none;">Logo</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <div class="view-switch">
+          <button id="goEventsPageBtn" class="btn btn-secondary view-btn">Operativa bodas</button>
+          <button id="goInventoryPageBtn" class="btn btn-secondary view-btn">Gestión inventario</button>
+        </div>
+        <button id="newEventBtn" class="btn">+ Nueva boda</button>
+        <button id="exportBtn" class="btn btn-secondary">Exportar PDF</button>
+        <button id="logoutBtn" type="button" class="btn btn-secondary">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <main id="eventsPage" class="layout page-view">
+      <section class="panel events-panel">
+        <div class="section-header">
+          <h2>Agenda de bodas</h2>
+          <p id="weekendSummary" class="muted"></p>
+        </div>
+        <div id="eventsList" class="events-list"></div>
+      </section>
+
+      <section class="panel detail-panel">
+        <form id="eventForm">
+          <div class="section-header">
+            <h2>Ficha del evento</h2>
+            <span id="activeEventBadge" class="pill"></span>
+          </div>
+
+          <div class="grid two">
+            <label>
+              Nombre interno
+              <input id="eventTitle" name="title" type="text" required />
+            </label>
+            <label>
+              Fecha
+              <input id="eventDate" name="date" type="date" required />
+            </label>
+            <label>
+              Finca / salón
+              <input id="eventVenue" name="venue" type="text" required />
+            </label>
+            <label>
+              Ciudad - Provincia
+              <input id="eventCity" name="city" type="text" placeholder="Puente Genil - Córdoba" />
+            </label>
+            <label>
+              Cliente / novios
+              <input id="eventCouple" name="couple" type="text" />
+            </label>
+            <label>
+              Estado
+              <select id="eventStatus" name="status">
+                <option value="confirmado">Confirmado</option>
+                <option value="preparacion">Preparación</option>
+                <option value="en_ruta">En ruta</option>
+                <option value="montado">Montado</option>
+                <option value="completado">Completado</option>
+              </select>
+            </label>
+          </div>
+
+          <h3>Servicios de Boda</h3>
+          <div class="grid phase-grid">
+            <article class="subpanel">
+              <label class="checkbox-row">
+                <input id="phaseCeremonyEnabled" type="checkbox" />
+                Ceremonia
+              </label>
+              <label>
+                Hora
+                <input id="phaseCeremonyTime" type="time" />
+              </label>
+              <label>
+                Notas
+                <textarea id="phaseCeremonyNotes" rows="2" placeholder="Micrófonos, música de entrada..."></textarea>
+              </label>
+            </article>
+
+            <article class="subpanel">
+              <label class="checkbox-row">
+                <input id="phaseCocktailEnabled" type="checkbox" />
+                Copa de bienvenida
+              </label>
+              <label>
+                Hora
+                <input id="phaseCocktailTime" type="time" />
+              </label>
+              <label>
+                Notas
+                <textarea id="phaseCocktailNotes" rows="2" placeholder="Zona chill, listado de canciones..."></textarea>
+              </label>
+            </article>
+
+            <article class="subpanel">
+              <label class="checkbox-row">
+                <input id="phaseOpenBarEnabled" type="checkbox" />
+                Barra libre
+              </label>
+              <label>
+                Hora
+                <input id="phaseOpenBarTime" type="time" />
+              </label>
+              <label>
+                Notas
+                <textarea id="phaseOpenBarNotes" rows="2" placeholder="Animación, momentos clave..."></textarea>
+              </label>
+            </article>
+          </div>
+
+          <h3>Equipo asignado</h3>
+          <div id="eventStaffChecklist" class="checklist"></div>
+
+          <h3>Material necesario para la boda</h3>
+          <div id="materialPlanner" class="material-table"></div>
+
+          <label>
+            Notas internas
+            <textarea id="eventNotes" rows="3" placeholder="Accesos, hora de montaje, teléfono de coordinación..."></textarea>
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" class="btn">Guardar cambios</button>
+            <button id="duplicateEventBtn" type="button" class="btn btn-secondary">Duplicar evento</button>
+            <button id="deleteEventBtn" type="button" class="btn btn-danger">Eliminar</button>
+          </div>
+        </form>
+      </section>
+
+      <aside class="panel side-panel">
+        <section class="stats" id="statsCards"></section>
+
+        <section>
+          <div class="section-header">
+            <h2>Personal</h2>
+          </div>
+          <form id="employeeForm" class="mini-form">
+            <input id="employeeName" type="text" placeholder="Nombre" required />
+            <input id="employeeRole" type="text" placeholder="Rol" required />
+            <button type="submit" class="btn btn-secondary">Añadir</button>
+          </form>
+          <div id="employeeList" class="stack-list"></div>
+        </section>
+      </aside>
+    </main>
+
+    <main id="inventoryPage" class="inventory-layout page-view hidden">
+      <section class="panel inventory-panel">
+        <div class="section-header">
+          <h2>Gestión de inventario real</h2>
+          <p id="inventoryRealSummary" class="muted"></p>
+        </div>
+
+        <form id="inventoryForm" class="mini-form mini-form-3">
+          <input id="inventoryName" type="text" placeholder="Producto / material" required />
+          <input id="inventoryCategory" type="text" placeholder="Categoría" required />
+          <input id="inventoryStock" type="number" min="0" placeholder="Stock real" required />
+          <button type="submit" class="btn">Añadir producto</button>
+        </form>
+
+        <div id="inventoryManagementTable" class="material-table"></div>
+      </section>
+    </main>
+
+    <div id="loginGate" class="login-gate hidden" role="dialog" aria-modal="true" aria-label="Acceso">
+      <form id="loginForm" class="login-card">
+        <h2>Acceso CRM</h2>
+        <label>
+          Usuario
+          <input id="loginUser" name="loginUser" type="text" autocomplete="username" required />
+        </label>
+
+        <label>
+          Contraseña
+          <input
+            id="loginPassword"
+            name="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+        </label>
+
+        <button type="submit" class="btn">Entrar</button>
+        <p id="loginError" class="error-text"></p>
+      </form>
+    </div>
+
+    <template id="emptyStateTemplate">
+      <div class="empty-state">
+        <h3>No hay bodas todavía</h3>
+        <p>Crea la primera y empezamos a organizar todo.</p>
+      </div>
+    </template>
+
+    <script src="./vendor/jspdf.umd.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
