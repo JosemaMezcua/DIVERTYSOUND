@@ -227,6 +227,8 @@
 
     <script src="./vendor/jspdf.umd.min.js"></script>
     <script>
+      // true = hosting estático (cPanel) sin backend Node.
+      window.DIVERTYSOUND_STATIC_MODE = false;
       // Opcional: puedes sobreescribir este valor antes de cargar app.js
       // window.DIVERTYSOUND_API_BASE = "https://api.tudominio.com/api";
       window.DIVERTYSOUND_API_BASE = "/api";

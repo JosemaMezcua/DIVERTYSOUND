@@ -1,4 +1,10 @@
 const API_BASE = resolveApiBase();
+const STATIC_MODE = resolveStaticMode();
+const STORAGE_KEY = "divertysound-crm-bodas-v4-static";
+const LEGACY_KEYS = ["divertysound-crm-bodas-v3", "divertysound-crm-bodas-v2", "divertysound-crm-bodas-v1"];
+const SESSION_KEY = "divertysound-crm-session-static-v1";
+const STATIC_AUTH_USER = "admin";
+const STATIC_AUTH_PASSWORD = "divertysound1";
 
 const statusLabel = {
   confirmado: "Confirmado",
@@ -88,8 +94,14 @@ const refs = {
 void bootstrap();
 
 async function bootstrap() {
+  if (STATIC_MODE) {
+    state = loadLocalState();
+    selectedEventId = state.events[0] ? state.events[0].id : null;
+    isAuthenticated = loadLocalAuthSession();
+  }
   bindEvents();
   renderAll();
+  if (STATIC_MODE) return;
   await refreshAuthAndState();
 }
 
@@ -97,6 +109,52 @@ function resolveApiBase() {
   const configured = String(window.DIVERTYSOUND_API_BASE || "").trim();
   if (!configured) return "/api";
   return configured.replace(/\/+$/, "");
+}
+
+function resolveStaticMode() {
+  return window.DIVERTYSOUND_STATIC_MODE === true;
+}
+
+function loadLocalState() {
+  const fallback = defaultState();
+  try {
+    const keys = [STORAGE_KEY].concat(LEGACY_KEYS);
+    let raw = "";
+    for (const key of keys) {
+      raw = localStorage.getItem(key);
+      if (raw) break;
+    }
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.events)) return fallback;
+    return normalizeState(parsed);
+  } catch {
+    return fallback;
+  }
+}
+
+function saveLocalState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Sin acción: en modo estático solo guardamos si localStorage está disponible.
+  }
+}
+
+function loadLocalAuthSession() {
+  try {
+    return localStorage.getItem(SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function persistLocalAuthSession() {
+  try {
+    localStorage.setItem(SESSION_KEY, isAuthenticated ? "1" : "0");
+  } catch {
+    // Sin acción: sesión local no persistida.
+  }
 }
 
 function bindEvents() {
@@ -345,6 +403,11 @@ function baseEvent() {
 }
 
 function persistAndRender() {
+  if (STATIC_MODE) {
+    saveLocalState();
+    renderAll();
+    return;
+  }
   renderAll();
   scheduleSave();
 }
@@ -462,6 +525,19 @@ async function handleLogin(event) {
     return;
   }
 
+  if (STATIC_MODE) {
+    const userOk = user === STATIC_AUTH_USER || user === "";
+    if (userOk && password === STATIC_AUTH_PASSWORD) {
+      isAuthenticated = true;
+      persistLocalAuthSession();
+      refs.loginError.textContent = "";
+      renderAll();
+      return;
+    }
+    refs.loginError.textContent = "Credenciales incorrectas.";
+    return;
+  }
+
   try {
     await apiRequest("/login", {
       method: "POST",
@@ -476,6 +552,13 @@ async function handleLogin(event) {
 }
 
 async function logout() {
+  if (STATIC_MODE) {
+    isAuthenticated = false;
+    persistLocalAuthSession();
+    renderAll();
+    return;
+  }
+
   try {
     await apiRequest("/logout", { method: "POST" });
   } catch {
