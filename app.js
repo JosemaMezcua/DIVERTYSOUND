@@ -1,4 +1,4 @@
-const API_BASE = "/api";
+const API_BASE = resolveApiBase();
 
 const statusLabel = {
   confirmado: "Confirmado",
@@ -93,6 +93,12 @@ async function bootstrap() {
   await refreshAuthAndState();
 }
 
+function resolveApiBase() {
+  const configured = String(window.DIVERTYSOUND_API_BASE || "").trim();
+  if (!configured) return "/api";
+  return configured.replace(/\/+$/, "");
+}
+
 function bindEvents() {
   refs.loginForm.addEventListener("submit", handleLogin);
   refs.logoutBtn.addEventListener("click", logout);
@@ -162,7 +168,7 @@ async function apiRequest(path, options = {}) {
   const payload = options.body;
   const response = await fetch(`${API_BASE}${path}`, {
     method,
-    credentials: "same-origin",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },

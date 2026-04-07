@@ -27,6 +27,41 @@ El servidor guarda los datos en:
 - `.divertysound-data/sessions.db`
 - `.divertysound-data/state.db`
 
+## Despliegue recomendado: Vercel + Render
+
+### 1) Backend en Render
+
+1. Crea un nuevo **Web Service** en Render conectado a este repo.
+2. Configura:
+   - Runtime: `Node`
+   - Build command: `npm install`
+   - Start command: `npm start`
+3. Variables de entorno en Render:
+   - `NODE_ENV=production`
+   - `ADMIN_PASSWORD=tu_password_seguro`
+   - `FRONTEND_ORIGIN=https://tu-frontend.vercel.app`
+   - Opcional: `ALLOW_VERCEL_PREVIEWS=true`
+4. Despliega y copia tu URL final, por ejemplo:
+   - `https://divertysound-backend.onrender.com`
+
+### 2) Frontend en Vercel
+
+1. Importa el repo en Vercel.
+2. Framework preset: `Other`.
+3. Deploy.
+4. En [index.html](/Users/yellowskinalmacen/Documents/DIVERTYSOUND/index.html:230), cambia:
+   - `https://TU-SERVICIO.onrender.com/api`
+   - por tu URL real de Render + `/api`, por ejemplo:
+   - `https://divertysound-backend.onrender.com/api`
+5. Redeploy en Vercel.
+
+### 3) Verificación rápida
+
+1. Abre el frontend de Vercel.
+2. Login con `admin` + tu contraseña.
+3. Crea o edita una boda.
+4. Refresca la página: los cambios deben seguir ahí.
+
 
 ## Login
 

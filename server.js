@@ -10,6 +10,13 @@ const PORT = Number(process.env.PORT || 8080);
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
 const ADMIN_USERNAME = "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "divertysound1";
+const NODE_ENV = process.env.NODE_ENV || "development";
+const COOKIE_SECURE = process.env.COOKIE_SECURE
+  ? process.env.COOKIE_SECURE === "true"
+  : NODE_ENV === "production";
+const COOKIE_SAME_SITE = COOKIE_SECURE ? "none" : "lax";
+const ALLOW_VERCEL_PREVIEWS = (process.env.ALLOW_VERCEL_PREVIEWS || "true") === "true";
+const FRONTEND_ORIGINS = parseOrigins(process.env.FRONTEND_ORIGIN);
 
 const DEFAULT_EMPLOYEES = [
   { id: "emp-1", name: "Carlos", role: "DJ principal" },
@@ -40,6 +47,7 @@ const ready = bootstrapDatabase();
 const app = express();
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
+app.use(corsForFrontend);
 app.use(express.static(__dirname, { dotfiles: "ignore" }));
 app.use(async (_req, _res, next) => {
   await ready;
@@ -153,8 +161,8 @@ async function getSessionUser(req) {
 function setSessionCookie(res, sid, expiresAt) {
   res.cookie("sid", sid, {
     httpOnly: true,
-    sameSite: "lax",
-    secure: false,
+    sameSite: COOKIE_SAME_SITE,
+    secure: COOKIE_SECURE,
     expires: new Date(expiresAt),
     path: "/",
   });
@@ -163,10 +171,44 @@ function setSessionCookie(res, sid, expiresAt) {
 function clearSessionCookie(res) {
   res.clearCookie("sid", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: false,
+    sameSite: COOKIE_SAME_SITE,
+    secure: COOKIE_SECURE,
     path: "/",
   });
+}
+
+function parseOrigins(value) {
+  return String(value || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  if (FRONTEND_ORIGINS.includes(origin)) return true;
+  if (ALLOW_VERCEL_PREVIEWS && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) return true;
+  if (NODE_ENV !== "production" && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)) return true;
+  return false;
+}
+
+function corsForFrontend(req, res, next) {
+  const origin = req.headers.origin;
+
+  if (origin && isAllowedOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  }
+
+  if (req.method === "OPTIONS") {
+    res.status(204).end();
+    return;
+  }
+
+  next();
 }
 
 async function bootstrapDatabase() {
