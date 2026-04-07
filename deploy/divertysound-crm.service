@@ -1,0 +1,16 @@
+[Unit]
+Description=DIVERTYSOUND CRM Node Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/divertysound
+EnvironmentFile=/var/www/divertysound/.env
+ExecStart=/usr/bin/npm start
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

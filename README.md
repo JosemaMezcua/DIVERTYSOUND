@@ -17,46 +17,68 @@ El servidor guarda los datos en:
 - `.divertysound-data/sessions.db`
 - `.divertysound-data/state.db`
 
-## Despliegue recomendado: Vercel + Render
+## Despliegue recomendado: VPS (Node + DB local)
 
-### 1) Backend en Render
+### 1) Preparar servidor (Ubuntu)
 
-1. Crea un nuevo **Web Service** en Render conectado a este repo.
-2. Configura:
-   - Runtime: `Node`
-   - Build command: `npm install`
-   - Start command: `npm start`
-3. Variables de entorno en Render:
-   - `NODE_ENV=production`
-   - `ADMIN_PASSWORD=tu_password_seguro`
-   - `FRONTEND_ORIGIN=https://tu-frontend.vercel.app`
-   - Opcional: `ALLOW_VERCEL_PREVIEWS=true`
-4. Despliega y copia tu URL final, por ejemplo:
-   - `https://divertysound-backend.onrender.com`
+1. Instala Node 20 y utilidades:
+   - `sudo apt update && sudo apt install -y nginx git curl`
+2. Instala Node.js 20 (NodeSource):
+   - `curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -`
+   - `sudo apt install -y nodejs`
+3. Crea carpeta del proyecto:
+   - `sudo mkdir -p /var/www/divertysound`
+   - `sudo chown -R $USER:$USER /var/www/divertysound`
 
-### 2) Frontend en Vercel
+### 2) Subir y arrancar app
 
-1. Importa el repo en Vercel.
-2. Framework preset: `Other`.
-3. Deploy.
-4. En [index.html](/Users/yellowskinalmacen/Documents/DIVERTYSOUND/index.html:230), cambia:
-   - `https://TU-SERVICIO.onrender.com/api`
-   - por tu URL real de Render + `/api`, por ejemplo:
-   - `https://divertysound-backend.onrender.com/api`
-5. Redeploy en Vercel.
+1. Clona repo en VPS:
+   - `git clone https://github.com/TU_USUARIO/TU_REPO.git /var/www/divertysound`
+2. Instala dependencias:
+   - `cd /var/www/divertysound && npm install`
+3. Configura variables:
+   - `cp .env.example .env`
+   - Edita `.env` y cambia `ADMIN_PASSWORD`.
+4. Prueba local en VPS:
+   - `npm start`
+   - Debe responder `http://127.0.0.1:8080/api/health`
 
-### 3) Verificación rápida
+### 3) Servicio permanente con systemd
 
-1. Abre el frontend de Vercel.
-2. Login con `admin` + tu contraseña.
-3. Crea o edita una boda.
-4. Refresca la página: los cambios deben seguir ahí.
+1. Copia servicio:
+   - `sudo cp deploy/divertysound-crm.service /etc/systemd/system/divertysound-crm.service`
+2. Activa y arranca:
+   - `sudo systemctl daemon-reload`
+   - `sudo systemctl enable divertysound-crm`
+   - `sudo systemctl start divertysound-crm`
+3. Logs:
+   - `sudo journalctl -u divertysound-crm -f`
+
+### 4) Nginx + dominio + HTTPS
+
+1. Copia config Nginx:
+   - `sudo cp deploy/nginx-divertysound.conf /etc/nginx/sites-available/divertysound`
+2. Edita `server_name` en ese archivo con tu dominio real.
+3. Activa sitio:
+   - `sudo ln -s /etc/nginx/sites-available/divertysound /etc/nginx/sites-enabled/divertysound`
+   - `sudo nginx -t && sudo systemctl reload nginx`
+4. SSL con Certbot:
+   - `sudo apt install -y certbot python3-certbot-nginx`
+   - `sudo certbot --nginx -d crm.tudominio.com`
+
+### 5) Actualizaciones futuras en VPS
+
+1. `cd /var/www/divertysound`
+2. `git pull`
+3. `npm install`
+4. `sudo systemctl restart divertysound-crm`
 
 
 ## Login
 
 - Usuario: `admin`
 - Contraseña: `divertysound1`
+- En VPS se recomienda cambiarla en `.env` (`ADMIN_PASSWORD=...`)
 
 ## Páginas del CRM
 

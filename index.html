@@ -227,10 +227,9 @@
 
     <script src="./vendor/jspdf.umd.min.js"></script>
     <script>
-      window.DIVERTYSOUND_API_BASE =
-        window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-          ? "/api"
-          : "https://divertysound-backend.onrender.com/api";
+      // Opcional: puedes sobreescribir este valor antes de cargar app.js
+      // window.DIVERTYSOUND_API_BASE = "https://api.tudominio.com/api";
+      window.DIVERTYSOUND_API_BASE = "/api";
     </script>
     <script src="./app.js"></script>
   </body>

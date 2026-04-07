@@ -14,8 +14,8 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 const COOKIE_SECURE = process.env.COOKIE_SECURE
   ? process.env.COOKIE_SECURE === "true"
   : NODE_ENV === "production";
-const COOKIE_SAME_SITE = COOKIE_SECURE ? "none" : "lax";
-const ALLOW_VERCEL_PREVIEWS = (process.env.ALLOW_VERCEL_PREVIEWS || "true") === "true";
+const COOKIE_SAME_SITE = process.env.COOKIE_SAME_SITE || "lax";
+const ALLOW_VERCEL_PREVIEWS = (process.env.ALLOW_VERCEL_PREVIEWS || "false") === "true";
 const FRONTEND_ORIGINS = parseOrigins(process.env.FRONTEND_ORIGIN);
 
 const DEFAULT_EMPLOYEES = [
