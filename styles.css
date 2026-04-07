@@ -407,6 +407,20 @@ textarea:focus {
   border-top: 1px solid #d6e2ee;
 }
 
+.inventory-cell {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.inventory-cell-action {
+  justify-items: start;
+}
+
+.inventory-value {
+  font-weight: 700;
+}
+
 .small-btn {
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -641,9 +655,29 @@ textarea:focus {
     height: 40px;
   }
 
-  .inventory-table-head,
+  .inventory-table-head {
+    display: none;
+  }
+
   .inventory-table-row {
-    grid-template-columns: 1.1fr 1fr 0.8fr 0.8fr 0.8fr auto;
-    font-size: 0.82rem;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+    font-size: 0.9rem;
+    background: #f9fcff;
+  }
+
+  .inventory-cell::before {
+    content: attr(data-label);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b8095;
+    font-weight: 700;
+  }
+
+  .inventory-cell-action .small-btn {
+    width: 100%;
+    min-height: 40px;
   }
 }

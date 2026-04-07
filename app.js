@@ -850,12 +850,24 @@ function renderInventoryManagement() {
         const available = Number(item.stock || 0) - reserved;
         return `
           <div class="inventory-table-row">
-            <input type="text" name="inv-name-${item.id}" value="${escapeHtml(item.name)}" data-inv-name-id="${item.id}" />
-            <input type="text" name="inv-category-${item.id}" value="${escapeHtml(item.category)}" data-inv-category-id="${item.id}" />
-            <input type="number" name="inv-stock-${item.id}" min="0" value="${item.stock}" data-inv-stock-id="${item.id}" />
-            <span>${reserved}</span>
-            <span class="${available < 0 ? "warning" : "ok"}">${available}</span>
-            <button class="small-btn danger" data-remove-inventory="${item.id}">Eliminar</button>
+            <div class="inventory-cell" data-label="Producto">
+              <input type="text" name="inv-name-${item.id}" value="${escapeHtml(item.name)}" data-inv-name-id="${item.id}" />
+            </div>
+            <div class="inventory-cell" data-label="Categoría">
+              <input type="text" name="inv-category-${item.id}" value="${escapeHtml(item.category)}" data-inv-category-id="${item.id}" />
+            </div>
+            <div class="inventory-cell" data-label="Stock real">
+              <input type="number" name="inv-stock-${item.id}" min="0" value="${item.stock}" data-inv-stock-id="${item.id}" />
+            </div>
+            <div class="inventory-cell" data-label="Reservado bodas">
+              <span class="inventory-value">${reserved}</span>
+            </div>
+            <div class="inventory-cell" data-label="Disponible">
+              <span class="inventory-value ${available < 0 ? "warning" : "ok"}">${available}</span>
+            </div>
+            <div class="inventory-cell inventory-cell-action" data-label="Acción">
+              <button class="small-btn danger" data-remove-inventory="${item.id}">Eliminar</button>
+            </div>
           </div>
         `;
       })
