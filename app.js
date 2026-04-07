@@ -744,29 +744,40 @@ function renderMaterialPlanner() {
         const fullyLoaded = plan.required > 0 && plan.packed >= plan.required;
         return `
           <div class="table-row">
-            <span>${escapeHtml(item.name)}<small class="muted">${escapeHtml(item.category)}</small></span>
-            <span>${item.stock}</span>
-            <input
-              type="number"
-              name="required-${item.id}"
-              min="0"
-              max="${item.stock}"
-              value="${plan.required}"
-              data-required-id="${item.id}"
-            />
-            <div class="packed-cell">
-              <button
-                type="button"
-                class="tick-toggle ${fullyLoaded ? "active" : ""}"
-                data-packed-toggle-id="${item.id}"
-                aria-pressed="${fullyLoaded ? "true" : "false"}"
-                title="${fullyLoaded ? "Marcar como no cargado" : "Marcar como cargado"}"
-              >
-                ${fullyLoaded ? "✓" : ""}
-              </button>
-              <small class="${fullyLoaded ? "ok" : "muted"}">${fullyLoaded ? "Cargado" : "Pendiente"}</small>
+            <div class="material-cell material-name" data-label="Material">
+              <span class="material-value">${escapeHtml(item.name)}</span>
+              <small class="muted">${escapeHtml(item.category)}</small>
             </div>
-            <span class="${pending > 0 ? "warning" : "ok"}">${pending}</span>
+            <div class="material-cell" data-label="Stock">
+              <span class="material-value">${item.stock}</span>
+            </div>
+            <div class="material-cell" data-label="Necesario">
+              <input
+                type="number"
+                name="required-${item.id}"
+                min="0"
+                max="${item.stock}"
+                value="${plan.required}"
+                data-required-id="${item.id}"
+              />
+            </div>
+            <div class="material-cell" data-label="Cargado">
+              <div class="packed-cell">
+                <button
+                  type="button"
+                  class="tick-toggle ${fullyLoaded ? "active" : ""}"
+                  data-packed-toggle-id="${item.id}"
+                  aria-pressed="${fullyLoaded ? "true" : "false"}"
+                  title="${fullyLoaded ? "Marcar como no cargado" : "Marcar como cargado"}"
+                >
+                  ${fullyLoaded ? "✓" : ""}
+                </button>
+                <small class="${fullyLoaded ? "ok" : "muted"}">${fullyLoaded ? "Cargado" : "Pendiente"}</small>
+              </div>
+            </div>
+            <div class="material-cell" data-label="Pendiente">
+              <span class="material-value ${pending > 0 ? "warning" : "ok"}">${pending}</span>
+            </div>
           </div>
         `;
       })
