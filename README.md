@@ -57,15 +57,15 @@ Incluye solo:
 2. Entra a la app:
    - `cd /opt/divertysound`
 3. Trae cambios de GitHub:
-   - `git pull`
+   - `git pull origin main`
 4. Reinstala dependencias (por si cambió `package.json`):
-   - `npm install`
+   - `npm install --omit=dev`
 5. Reinicia servicio:
    - `systemctl restart divertysound-crm`
 6. Verifica estado:
    - `systemctl status divertysound-crm --no-pager`
 
-### 4) Si cambias Nginx
+### 4) Si cambias Nginx conf deploy
 
 1. Edita la config:
    - `nano /etc/nginx/sites-available/divertysound`
